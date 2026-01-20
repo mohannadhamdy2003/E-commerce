@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import  Cookie  from "cookie-universal";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -15,7 +15,7 @@ const Login = () => {
     password: "",
   });
   const cookie=Cookie()
-
+  const navigate=useNavigate()
   async function login() {
     let res = await axios.post(`${baseURL}${LOGIN}`, form);
     
@@ -33,7 +33,7 @@ const Login = () => {
         email: "",
         password: "",
       });
-      
+      navigate("/adminlayout");
     },
     onError: (err) => {
       console.log(err);
@@ -92,6 +92,18 @@ const Login = () => {
             <p className="text-red-500">Email or password is wrong!</p>
           )}
         </form>
+        <a
+          href="http://127.0.0.1:8000/login-google"
+          className="flex items-center justify-center gap-3 w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition"
+        >
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          <span>Sign in with Google</span>
+        </a>
+
         <p className="text-center text-sm mt-4">
           Dont have an account?{" "}
           <Link className="text-blue-500" to="/register">
