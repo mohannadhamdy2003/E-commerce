@@ -4,20 +4,29 @@ import Login from "./Pages/Auth/Login";
 import Register from "./Pages/Auth/Register";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Users from "./Pages/Dashboard/Users";
+import GoogleCallBack from "./Pages/Auth/GoogleCallBack";
+import RequireAuth from "./Pages/Auth/RequireAuth";
+import UpdateUser from "./Pages/Dashboard/UpdateUser";
 
+const queryClient = new QueryClient();
 const App = () => {
-  const queryClient = new QueryClient();
   return (
     <div>
       <QueryClientProvider client={queryClient}>
         <Routes>
+          {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {/* <Route path="/" element={<AdminLayout />} /> */}
-          <Route path="/adminlayout" element={<AdminLayout />}>
-            <Route path="users" element={<Users />} />
+          <Route path="/auth/google/callback" element={<GoogleCallBack />} />
+          {/* Protected Routes */}
+          <Route element={<RequireAuth />}>
+            <Route path="/adminlayout" element={<AdminLayout />}>
+              <Route path="users" element={<Users />} />
+              <Route path="users/:id" element={<UpdateUser />} />
+            </Route>
           </Route>
-          <Route path="*" element={<Navigate to="/login" />} />
+          {/* Not found */}
+          {/* <Route path="*" element={<Navigate tos="/login" />} /> */}
         </Routes>
       </QueryClientProvider>
     </div>

@@ -1,46 +1,50 @@
-import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import MobileItem from "./MobileItem";
 import logo from "@/assets/images/logo.jpg";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
-
-const Sidebar = ({  className, open }) => {
-  const { pathname } = useLocation();
-  // const[flag,setFlag]=useState()
+export default function MobileSidebar({ open, onClose }) {
+  const {pathname}=useLocation()
   return (
-    <div className={className}>
-      
-      <nav
-        className={`hidden lg:block
-        h-screen ${
-          open ? "opacity-100" : "opacity-0"
-        } bg-white border-r border-gray-200 shadow-md
-      transition-all duration-300 relative
-      ${open ? "w-64" : "w-15"}
-    `}
+    <>
+      {/* BACKDROP */}
+      <div
+        className={`
+            fixed inset-0 bg-black/40 z-40 transition-opacity
+            ${open ? "opacity-100 visible" : "opacity-0 invisible"}
+          `}
+        onClick={onClose}
+      />
+
+      {/* SIDEBAR */}
+      <aside
+        className={`
+            fixed top-0 left-0 h-screen w-64 bg-white z-50
+            transform transition-transform duration-300
+            ${open ? "translate-x-0" : "-translate-x-full"}
+          `}
       >
-        {/* ===== HEADER ===== */}
-        <div className="h-16 flex items-center justify-between px-4">
-          {/* <img
-            src={logo}
-            alt="logo"
-            className={`h-40 w-auto transition-opacity duration-300 select-none ${
-              open ? "opacity-100" : "opacity-0"
-            }`}
-          /> */}
+        {/* HEADER */}
+        <div className="h-16 flex items-center justify-between px-4 border-b">
+          <img src={logo} alt="logo" className="h-8 select-none" />
+
+          <button
+            onClick={onClose}
+            className="text-xl font-bold cursor-pointer"
+          >
+            ×
+          </button>
         </div>
 
-        {/* ===== MENU ===== */}
-        {/* <ul className="mt-6 space-y-1">
+        {/* MENU */}
+        <ul className="mt-6 space-y-1">
           {/* Dashboard */}
           <li>
             <Link
               to="/adminlayout"
-              className="flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all"
+              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout" ? "text-blue-500 border-b-red-500" : ""}`}
             >
               <svg
-                className="w-[18px] h-[18px] flex-shrink-0 text-slate-700"
-                fill="currentColor"
+                className={`w-[18px] h-[18px] flex-shrink-0 text-slate-700 ${pathname === "/adminlayout" ? "text-blue-500 border-b-red-500" : ""}`}
+                // fill="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
@@ -60,7 +64,7 @@ const Sidebar = ({  className, open }) => {
           <li>
             <Link
               to="/adminlayout/users"
-              className="flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all"
+              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/users" ? "text-blue-500 border-b-red-500" : ""}`}
             >
               <svg
                 className="w-[18px] h-[18px] flex-shrink-0 text-slate-700"
@@ -84,7 +88,7 @@ const Sidebar = ({  className, open }) => {
           <li>
             <Link
               to="/adminlayout/products"
-              className="flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all"
+              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/products" ? "text-blue-500 border-b-red-500" : ""}`}
             >
               <svg
                 className="w-[18px] h-[18px] flex-shrink-0 text-slate-700"
@@ -103,10 +107,8 @@ const Sidebar = ({  className, open }) => {
               </span>
             </Link>
           </li>
-        {/* </ul> */} 
-      </nav>
-    </div>
+        </ul>
+      </aside>
+    </>
   );
-};
-
-export default Sidebar;
+}

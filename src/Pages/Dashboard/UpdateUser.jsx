@@ -1,65 +1,70 @@
-import { baseURL, REGISTER } from "@/Api/Api";
+import { USER } from "@/Api/Api";
+import api from "@/Api/axios";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const Register = () => {
-  const navigate=useNavigate()
+const UpdateUser = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    password: "",
-  });
-  const [rpass, setRpass] = useState("");
-  const [error,setError] = useState("");
-
-
-  async function register() {
-    let res = await axios.post(`${baseURL}${REGISTER}`, form);
-    if (res.status >= 200 && res.status < 300) {
-      console.log("success");
-    }
     
-  }
-  const registerMutation = useMutation({
-    mutationFn: register,
-    onSuccess: () => {
-      setForm({
-        name: "",
-        email: "",
-        password: "",
-      });
-      setRpass("");
-      navigate("/login")
+  });
+  const navigate=useNavigate()
+  
+  const {id} = useParams();
+  
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["user", id],
+    queryFn: async () => {
+      const res = await api.get(`${USER}/${id}`);
+      return res.data;
     },
-    onError:(err)=>{
-      console.log(err)
-      setError(err.response.data.message)
-      console.log(error);
-    }
+    enabled: !!id,
+    retry: false,
+  });
+  const UpdateMutation = useMutation({
+    mutationFn: async()=>{
+         await api.post(`${USER}/edit/${id}`, form);
+    },
+    onSuccess: () => {
+        
+      navigate("/adminLayout/users");
+    },
+    onError: (err) => {
+      console.log(err);
+      
+    },
   });
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (form.password !== rpass) return;
-    registerMutation.mutate();
+
+  useEffect(() => {
+    if (data) {
+      setForm({
+        name: data.name,
+        email: data.email,
+       
+      });
+    }
+  }, [data]);
+//   console.log(form)
+  function handleSubmit(e) {
+    e.preventDefault()
+    UpdateMutation.mutate()
   }
   function handleChange(e) {
     setForm((prev) => {
       return { ...prev, [e.target.name]: e.target.value };
     });
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100   ">
       <Card className="w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold mb-6 text-center">Register</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">Update User</h1>
         <form className="space-y-4 " onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="name">Name</Label>
@@ -87,7 +92,7 @@ const Register = () => {
               onChange={handleChange}
             />
           </div>
-          <div>
+          {/* <div>
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -114,30 +119,19 @@ const Register = () => {
             {form.password !== rpass && (
               <p className="text-2 text-red-500">not matched passwords</p>
             )}
-          </div>
+          </div> */}
           <Button
             type="submit"
             className="w-full mt-2 cursor-pointer"
-            disabled={registerMutation.isPending}
+            disabled={isLoading}
           >
-            {registerMutation.isPending ? "Registering..." : "Register"}
+            {isLoading ? "Updating..." : "Update User"}
           </Button>
-          {registerMutation.isError && (
-            <p className="text-red-500">
-              {error||"Registration failed"}
-               
-            </p>
-          )}
+          {isError && <p className="text-red-500">{"Registration failed"}</p>}
         </form>
-        <p className="text-center text-sm mt-4">
-          Already have an account?{" "}
-          <Link className="text-blue-500" to="/login">
-            Login
-          </Link>
-        </p>
       </Card>
     </div>
   );
 };
 
-export default Register;
+export default UpdateUser;

@@ -16,6 +16,7 @@ const Login = () => {
   });
   const cookie=Cookie()
   const navigate=useNavigate()
+  const [error,setError]=useState("")
   async function login() {
     let res = await axios.post(`${baseURL}${LOGIN}`, form);
     
@@ -37,6 +38,9 @@ const Login = () => {
     },
     onError: (err) => {
       console.log(err);
+      console.log(err.response.statusText);
+      // setError(err.response.data.message);
+      // console.log(err.response.data.message);
     },
   });
 
@@ -89,7 +93,7 @@ const Login = () => {
             {loginMutation.isPending ? "Logining..." : "Login"}
           </Button>
           {loginMutation.isError && (
-            <p className="text-red-500">Email or password is wrong!</p>
+            <p className="text-red-500">{error||"Email or password is wrong!"}</p>
           )}
         </form>
         <a
