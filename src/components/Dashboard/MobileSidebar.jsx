@@ -1,8 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import MobileItem from "./MobileItem";
+// import MobileItem from "./MobileItem";
 import logo from "@/assets/images/logo.jpg";
+import {
+  faTableColumns,
+  faUser,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function MobileSidebar({ open, onClose }) {
-  const {pathname}=useLocation()
+  const { pathname } = useLocation();
   return (
     <>
       {/* BACKDROP */}
@@ -42,14 +48,7 @@ export default function MobileSidebar({ open, onClose }) {
               to="/adminlayout"
               className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout" ? "text-blue-500 border-b-red-500" : ""}`}
             >
-              <svg
-                className={`w-[18px] h-[18px] flex-shrink-0 text-slate-700 ${pathname === "/adminlayout" ? "text-blue-500 border-b-red-500" : ""}`}
-                // fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
-              </svg>
-
+              <FontAwesomeIcon icon={faTableColumns} />
               <span
                 className={`ml-3 whitespace-nowrap transition-all duration-300 ${
                   open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
@@ -66,14 +65,8 @@ export default function MobileSidebar({ open, onClose }) {
               to="/adminlayout/users"
               className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/users" ? "text-blue-500 border-b-red-500" : ""}`}
             >
-              <svg
-                className="w-[18px] h-[18px] flex-shrink-0 text-slate-700"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
-              </svg>
-
+              
+              <FontAwesomeIcon icon={faUser} />
               <span
                 className={`ml-3 whitespace-nowrap transition-all duration-300 ${
                   open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
@@ -84,6 +77,40 @@ export default function MobileSidebar({ open, onClose }) {
             </Link>
           </li>
 
+          {/* Add User */}
+          <li>
+            <Link
+              to="/adminlayout/users/addUser"
+              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/users/addUser" ? "text-blue-500 border-b-red-500" : ""}`}
+            >
+              <FontAwesomeIcon icon={faUserPlus} />
+
+              <span
+                className={`ml-3 whitespace-nowrap transition-all duration-300 ${
+                  open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
+                }`}
+              >
+                Add User
+              </span>
+            </Link>
+          </li>
+          {/* Writer */}
+          <li>
+            <Link
+              to="/adminlayout/Writer"
+              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/Writer" ? "text-blue-500 border-b-red-500" : ""}`}
+            >
+              <FontAwesomeIcon icon={faUserPlus} />
+
+              <span
+                className={`ml-3 whitespace-nowrap transition-all duration-300 ${
+                  open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
+                }`}
+              >
+                Writer
+              </span>
+            </Link>
+          </li>
           {/* Products */}
           <li>
             <Link

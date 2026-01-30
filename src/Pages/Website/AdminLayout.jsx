@@ -1,6 +1,6 @@
 import Header from "@/components/Dashboard/Header";
 import MobileSidebar from "@/components/Dashboard/MobileSidebar";
-import Sidebar from "@/components/Dashboard/Sidebar";
+// import Sidebar from "@/components/Dashboard/Sidebar";
 import { faArrowRight, faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
@@ -59,7 +59,7 @@ const AdminLayout = () => {
         </header>
 
         {/* CONTENT */}
-        <main className="flex-1 p-4 lg:p-8 bg-gray-50">
+        <main className="flex-1 p-4 lg:p-8 ">
           <Outlet />
         </main>
       </div>

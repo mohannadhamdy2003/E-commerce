@@ -2,6 +2,8 @@ import { baseURL, LOGIN } from "@/Api/Api";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+
+// import logo from "@/assets/images/logo.jpg";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -93,7 +95,9 @@ const Login = () => {
             {loginMutation.isPending ? "Logining..." : "Login"}
           </Button>
           {loginMutation.isError && (
-            <p className="text-red-500">{error||"Email or password is wrong!"}</p>
+            <p className="text-red-500">
+              {error || "Email or password is wrong!"}
+            </p>
           )}
         </form>
         <a

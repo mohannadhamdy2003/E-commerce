@@ -7,6 +7,11 @@ import Users from "./Pages/Dashboard/Users";
 import GoogleCallBack from "./Pages/Auth/GoogleCallBack";
 import RequireAuth from "./Pages/Auth/RequireAuth";
 import UpdateUser from "./Pages/Dashboard/UpdateUser";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import AddUser from "./Pages/Dashboard/AddUser";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import Forbidden from "./Pages/Auth/Forbidden";
+import Writer from "./Pages/Dashboard/Writer";
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -19,15 +24,23 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/auth/google/callback" element={<GoogleCallBack />} />
           {/* Protected Routes */}
-          <Route element={<RequireAuth />}>
+          
+            <Route index element={<Dashboard />} />
             <Route path="/adminlayout" element={<AdminLayout />}>
-              <Route path="users" element={<Users />} />
-              <Route path="users/:id" element={<UpdateUser />} />
+              <Route element={<RequireAuth AllowedRole={["1995"]} />}>
+                <Route path="users" element={<Users />} />
+                <Route path="users/addUser" element={<AddUser />} />
+                <Route path="users/:id" element={<UpdateUser />} />
             </Route>
-          </Route>
+                <Route element={<RequireAuth AllowedRole={["1996","1995"]} />}>
+                  <Route path="writer" element={<Writer />} />
+                </Route>
+              </Route>
+          
           {/* Not found */}
           {/* <Route path="*" element={<Navigate tos="/login" />} /> */}
         </Routes>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </div>
   );

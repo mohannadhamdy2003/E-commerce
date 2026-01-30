@@ -3,75 +3,65 @@ import api from "@/Api/axios";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Spinner } from "@/components/ui/spinner";
 import { Label } from "@radix-ui/react-dropdown-menu";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+import { useMutation} from "@tanstack/react-query";
+import axios from "axios";
+import React, {  useState } from "react";
+import {  useNavigate } from "react-router-dom";
 
-const UpdateUser = () => {
+const AddUser = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     email: "",
-    role:"",
-    
+    password: "",
+    role:""
   });
-  const navigate=useNavigate()
-  
-  // Get user by ID
-  const {id} = useParams();
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["user", id],
-    queryFn: async () => {
-      const res = await api.get(`${USER}/${id}`);
-      return res.data;
-    },
-    enabled: !!id,
-    retry: false,
-  });
-  // Update action
-  const UpdateMutation = useMutation({
-    mutationFn: async()=>{
-         await api.post(`${USER}/edit/${id}`, form);
-    },
+  const [rpass, setRpass] = useState("");
+  const [error, setError] = useState("");
+
+  async function register() {
+    let res = await api.post(`${USER}/add`, form);
+    if (res.status >= 200 && res.status < 300) {
+      console.log("success");
+    }
+  }
+  const registerMutation = useMutation({
+    mutationFn: register,
     onSuccess: () => {
-        
+      setForm({
+        name: "",
+        email: "",
+        password: "",
+        role:"",
+      });
+      setRpass("");
       navigate("/adminLayout/users");
     },
     onError: (err) => {
       console.log(err);
-      
+      setError(err.response.data.message);
+    //   console.log(error);
     },
   });
-  
 
-  useEffect(() => {
-    if (data) {
-      setForm({
-        name: data.name,
-        email: data.email,
-        role:data.role,
-      });
-    }
-    // console.log(form)
-  }, [data]);
-//   console.log(form)
-  function handleSubmit(e) {
-    e.preventDefault()
-    UpdateMutation.mutate()
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (form.password !== rpass) return;
+    registerMutation.mutate();
   }
   function handleChange(e) {
     setForm((prev) => {
       return { ...prev, [e.target.name]: e.target.value };
     });
   }
+
   return (
-    <div className="flex items-center justify-center p-0   ">
+    <div className="min-h-screen flex items-center justify-center mt-[-60px]   ">
       <Card className="w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold mb-6 text-center">Update User</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">Add User</h1>
         <form className="space-y-4 " onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="name">Name</Label>
@@ -100,24 +90,6 @@ const UpdateUser = () => {
             />
           </div>
           <div>
-            <Label htmlFor="role">Role</Label>
-            {/* <Input
-              id="role"
-              name="role"
-              type="email"
-              required
-              value={form.email}
-              placeholder="example@mail.com"
-              onChange={handleChange}
-            /> */}
-            <NativeSelect onChange={handleChange} name="role" value={form.role}>
-              <NativeSelectOption disabled value="" >Select Role</NativeSelectOption>
-              <NativeSelectOption  value={"1995"}>Admin</NativeSelectOption>
-              <NativeSelectOption  value={"2001"}>User</NativeSelectOption>
-              <NativeSelectOption  value={"1996"}>Writer</NativeSelectOption>
-            </NativeSelect>
-          </div>
-          {/* <div>
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -144,19 +116,32 @@ const UpdateUser = () => {
             {form.password !== rpass && (
               <p className="text-2 text-red-500">not matched passwords</p>
             )}
-          </div> */}
+          </div>
+          <div>
+            <Label htmlFor="role">Role</Label>
+            <NativeSelect onChange={handleChange} name="role" value={form.role}>
+              <NativeSelectOption disabled value="">
+                Select Role
+              </NativeSelectOption>
+              <NativeSelectOption value={"1995"}>Admin</NativeSelectOption>
+              <NativeSelectOption value={"2001"}>User</NativeSelectOption>
+              <NativeSelectOption value={"1996"}>Writer</NativeSelectOption>
+            </NativeSelect>
+          </div>
           <Button
             type="submit"
             className="w-full mt-2 cursor-pointer"
-            disabled={isLoading}
+            disabled={registerMutation.isPending}
           >
-            {isLoading ? "Updating..." : "Update User"}
+            {registerMutation.isPending ? "Adding..." : "Add User"}
           </Button>
-          {isError && <p className="text-red-500">{"Registration failed"}</p>}
+          {registerMutation.isError && (
+            <p className="text-red-500">{error || "Adding User Failed"}</p>
+          )}
         </form>
       </Card>
     </div>
   );
 };
 
-export default UpdateUser;
+export default AddUser;
