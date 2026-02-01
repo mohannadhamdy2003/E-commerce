@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/native-select";
 
 const UpdateUser = () => {
+  const navigate=useNavigate()
   const [form, setForm] = useState({
     name: "",
     email: "",
     role:"",
     
   });
-  const navigate=useNavigate()
   
   // Get user by ID
   const {id} = useParams();
@@ -56,9 +56,9 @@ const UpdateUser = () => {
         role:data.role,
       });
     }
-    // console.log(form)
+    
   }, [data]);
-//   console.log(form)
+
   function handleSubmit(e) {
     e.preventDefault()
     UpdateMutation.mutate()
@@ -68,6 +68,9 @@ const UpdateUser = () => {
       return { ...prev, [e.target.name]: e.target.value };
     });
   }
+
+  if(isLoading) return;
+  if(isError) navigate("/page/404");
   return (
     <div className="flex items-center justify-center p-0   ">
       <Card className="w-full max-w-md p-8">
@@ -101,15 +104,7 @@ const UpdateUser = () => {
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
-            {/* <Input
-              id="role"
-              name="role"
-              type="email"
-              required
-              value={form.email}
-              placeholder="example@mail.com"
-              onChange={handleChange}
-            /> */}
+            
             <NativeSelect onChange={handleChange} name="role" value={form.role}>
               <NativeSelectOption disabled value="" >Select Role</NativeSelectOption>
               <NativeSelectOption  value={"1995"}>Admin</NativeSelectOption>
@@ -117,34 +112,7 @@ const UpdateUser = () => {
               <NativeSelectOption  value={"1996"}>Writer</NativeSelectOption>
             </NativeSelect>
           </div>
-          {/* <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              required
-              minLength="8"
-              value={form.password}
-              placeholder="******"
-              onChange={handleChange}
-            />
-            <Label htmlFor="Cpassword">Confirm Password</Label>
-            <Input
-              id="Cpassword"
-              value={rpass}
-              required
-              minLength="8"
-              onChange={(e) => {
-                setRpass(e.target.value);
-              }}
-              type="password"
-              placeholder="******"
-            />
-            {form.password !== rpass && (
-              <p className="text-2 text-red-500">not matched passwords</p>
-            )}
-          </div> */}
+          
           <Button
             type="submit"
             className="w-full mt-2 cursor-pointer"
@@ -152,7 +120,7 @@ const UpdateUser = () => {
           >
             {isLoading ? "Updating..." : "Update User"}
           </Button>
-          {isError && <p className="text-red-500">{"Registration failed"}</p>}
+          {/* {isError && <p className="text-red-500">{"Registration failed"}</p>} */}
         </form>
       </Card>
     </div>

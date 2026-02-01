@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 
 // import logo from "@/assets/images/logo.jpg";
 import { Label } from "@radix-ui/react-dropdown-menu";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import  Cookie  from "cookie-universal";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -19,30 +19,36 @@ const Login = () => {
   const cookie=Cookie()
   const navigate=useNavigate()
   const [error,setError]=useState("")
+  const queryClient=useQueryClient()
+  
   async function login() {
     let res = await axios.post(`${baseURL}${LOGIN}`, form);
     
     if (res.status >= 200 && res.status < 300) {
       console.log("success");
-      const token=res.data.token
-      cookie.set("e-commerce",token)
     }
-  }
+    return res.data
+    
+  } 
+  // useEffect(() => {
+  //   console.log(typeof(currentUser.role));
+  // }, [currentUser]);
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      setForm({
-        
-        email: "",
-        password: "",
-      });
-      navigate("/adminlayout");
-    },
-    onError: (err) => {
-      console.log(err);
-      console.log(err.response.statusText);
-      // setError(err.response.data.message);
-      // console.log(err.response.data.message);
+    onSuccess: (data) => {
+      const { token, user } = data;
+
+      cookie.set("e-commerce", token);
+
+      // ✅ store user globally
+      queryClient.setQueryData(["user"], user);
+
+      // ✅ role-based redirect
+      if (user.role === "2001") {
+        navigate("/");
+      } else {
+        navigate("/adminlayout");
+      }
     },
   });
 

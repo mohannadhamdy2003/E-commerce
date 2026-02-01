@@ -2,11 +2,15 @@ import React from 'react'
 import api from '@/Api/axios';
 import { baseURL, LOGOUT } from '@/Api/Api';
 import { Link } from 'react-router-dom';
+import Cookie from "cookie-universal"
 const Logout = () => {
+    const cookie=Cookie()
     async function handleLogout(){
         try{
             const res=await api.get(`${baseURL}${LOGOUT}`)
             console.log(res)
+            cookie.remove("e-commerce")
+
         }catch(err){
             console.log(err)
         }

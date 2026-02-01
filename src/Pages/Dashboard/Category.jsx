@@ -7,51 +7,50 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  QueryClient,
+ 
   useMutation,
   useQuery,
-  useQueryClient,
+  
 } from "@tanstack/react-query";
 import api from "@/Api/axios";
-import { baseURL, GETUSERS, USER } from "@/Api/Api";
+import { baseURL, CATEGORIES, GETUSERS, USER } from "@/Api/Api";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-const Users = () => {
-  const queryClient = useQueryClient();
-  // Get user from cache
-  const currentUser = queryClient.getQueryData(["user"]);
+const Category = () => {
+
 
   // Get users
-  const getUsers = async () => {
-    const { data } = await api.get(`${baseURL}${GETUSERS}`);
+  const getCat = async () => {
+    const { data } = await api.get(`${CATEGORIES}`);
     return data;
   };
   const {
-    data: users = [],
+    data: categories = [],
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["users"],
-    queryFn: getUsers,
+    queryKey: ["categories"],
+    queryFn: getCat,
+    retry:false,
   });
   // delete users
-  const deleteUserMutation = useMutation({
-    mutationFn: (id) => api.delete(`${USER}/${id}`),
+  const deleteCatMutation = useMutation({
+    mutationFn: (id) => api.delete(`${CATEGORIES}/${id}`),
 
     onSuccess: () => {
-      // Refresh users list
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      
+      
     },
 
     onError: (error) => {
-      console.error("Delete failed", error);
+      console.error("Delete Categories failed", error);
     },
   });
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-40 text-gray-500">
-        Loading users...
+        Loading Categories...
       </div>
     );
   }
@@ -59,12 +58,12 @@ const Users = () => {
   if (isError) {
     return (
       <div className="flex items-center justify-center h-40 text-red-500">
-        Failed to load users
+        Failed to load Categories
       </div>
     );
   }
 
-  if (users.length === 0) {
+  if (categories.length === 0) {
     return (
       <div className="flex items-center justify-center h-40 text-gray-500">
         No users found
@@ -76,7 +75,7 @@ const Users = () => {
     <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden relative">
       <div>
         <Link to="addUser">
-          <Button>Add User</Button>
+          <Button>Add Category</Button>
         </Link>
       </div>
       <Table>
@@ -91,9 +90,9 @@ const Users = () => {
         </TableHeader>
 
         <TableBody>
-          {users.map((user, index) => (
+          {categories.map((cat, index) => (
             <TableRow
-              key={user.id}
+              key={cat.id}
               className="hover:bg-gray-50 transition-colors"
             >
               <TableCell className="text-center font-medium">
@@ -101,36 +100,14 @@ const Users = () => {
               </TableCell>
 
               <TableCell className="font-medium text-slate-800 ">
-                {user.name + "  "}
-                {currentUser.email === user.email ? (
-                  <span className="text-red-500 font-bold text-[15px] inline-block">
-                    (You)
-                  </span>
-                ) : (
-                  ""
-                )}
+                {cat.name + "  "}
               </TableCell>
 
-              <TableCell className="text-slate-600">{user.email}</TableCell>
-              <TableCell className="text-slate-600">
-                {user.role == "1995"
-                  ? "Admin"
-                  : user.role == "2001"
-                    ? "User":user.role == "1999"?"Product manager"
-                    : "Writer"}
-              </TableCell>
-
+              <TableCell className="text-slate-600">{cat.email}</TableCell>
               <TableCell className="text-right pr-6">
                 <div className="flex items-center justify-end gap-4">
-                  {currentUser.email === user.email ? (
-                    <>
-                      <p className="text-red-500 font-bold text-[15px]">You</p>
-                    </>
-                  ) : (
-                    ""
-                  )}
                   <Link
-                    to={`${user.id}`}
+                    to={`${cat.id}`}
                     className="text-blue-600 hover:text-blue-800 transition cursor-pointer"
                     title="Edit user"
                   >
@@ -138,10 +115,9 @@ const Users = () => {
                   </Link>
 
                   <button
-                    className={`text-red-600 hover:text-red-800 transition  ${currentUser.email === user.email ? "opacity-40  cursor-default" : "cursor-pointer"}`}
+                    className={`text-red-600 hover:text-red-800 transition  `}
                     title="Delete user"
-                    onClick={() => deleteUserMutation.mutate(user.id)}
-                    disabled={currentUser.email === user.email}
+                    onClick={() => deleteCatMutation.mutate(cat.id)}
                   >
                     🗑️
                   </button>
@@ -155,4 +131,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Category;

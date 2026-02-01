@@ -12,37 +12,50 @@ import AddUser from "./Pages/Dashboard/AddUser";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Forbidden from "./Pages/Auth/Forbidden";
 import Writer from "./Pages/Dashboard/Writer";
+import Home from "./Pages/Website/Home";
+import NotFound from "./Pages/Auth/NotFound";
+import RequireBack from "./Pages/Auth/RequireBack";
+import Category from "./Pages/Dashboard/Category";
+import Product from "./Pages/Dashboard/Product";
+import AddCategory from "./Pages/Dashboard/AddCategory";
 
 const queryClient = new QueryClient();
 const App = () => {
   return (
-    <div>
-      <QueryClientProvider client={queryClient}>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/auth/google/callback" element={<GoogleCallBack />} />
-          {/* Protected Routes */}
-          
+    <QueryClientProvider client={queryClient}>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route element={<RequireBack/>}>
+          <Route path="/login" element={<Login />} />{" "}
+          <Route path="/register" element={<Register />} />{" "}
+        </Route>
+        <Route path="/auth/google/callback" element={<GoogleCallBack />} />
+        <Route path="/*" element={<NotFound />} />
+        {/* Protected Rouutes */}
+        <Route element={<RequireAuth AllowedRole={["1995", "1996","1999"]} />}>
+          <Route path="/adminlayout" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="/adminlayout" element={<AdminLayout />}>
-              <Route element={<RequireAuth AllowedRole={["1995"]} />}>
-                <Route path="users" element={<Users />} />
-                <Route path="users/addUser" element={<AddUser />} />
-                <Route path="users/:id" element={<UpdateUser />} />
+
+            <Route element={<RequireAuth AllowedRole={["1995"]} />}>
+              <Route path="users" element={<Users />} />
+              <Route path="users/addUser" element={<AddUser />} />
+              <Route path="users/:id" element={<UpdateUser />} />
             </Route>
-                <Route element={<RequireAuth AllowedRole={["1996","1995"]} />}>
-                  <Route path="writer" element={<Writer />} />
-                </Route>
-              </Route>
-          
-          {/* Not found */}
-          {/* <Route path="*" element={<Navigate tos="/login" />} /> */}
-        </Routes>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </div>
+
+            <Route element={<RequireAuth AllowedRole={["1995", "1996"]} />}>
+              <Route path="writer" element={<Writer />} />
+            </Route>
+            <Route element={<RequireAuth AllowedRole={["1995", "1999"]} />}>
+              <Route path="categories" element={<Category />} />
+              <Route path="categories/addCategory" element={<AddCategory />} />
+              <Route path="product" element={<Product />} />
+            </Route>
+          </Route>
+        </Route>
+      </Routes>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };
 

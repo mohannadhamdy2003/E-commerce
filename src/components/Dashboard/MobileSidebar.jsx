@@ -1,14 +1,17 @@
 import { Link, useLocation } from "react-router-dom";
-// import MobileItem from "./MobileItem";
 import logo from "@/assets/images/logo.jpg";
-import {
-  faTableColumns,
-  faUser,
-  faUserPlus,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {  useQueryClient } from "@tanstack/react-query";
+import { SIDEBAR_MENU } from "@/assets/images/Config/sidebarMenu";
+import SidebarItem from "./SidebarItem";
+
+
+
 export default function MobileSidebar({ open, onClose }) {
   const { pathname } = useLocation();
+  const queryClient = useQueryClient();
+  const currentUser = queryClient.getQueryData(["user"]); 
+  const role = currentUser?.role;
+
   return (
     <>
       {/* BACKDROP */}
@@ -42,98 +45,19 @@ export default function MobileSidebar({ open, onClose }) {
 
         {/* MENU */}
         <ul className="mt-6 space-y-1">
-          {/* Dashboard */}
-          <li>
-            <Link
-              to="/adminlayout"
-              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout" ? "text-blue-500 border-b-red-500" : ""}`}
-            >
-              <FontAwesomeIcon icon={faTableColumns} />
-              <span
-                className={`ml-3 whitespace-nowrap transition-all duration-300 ${
-                  open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
-                }`}
-              >
-                Dashboard
-              </span>
-            </Link>
-          </li>
-
-          {/* Users */}
-          <li>
-            <Link
-              to="/adminlayout/users"
-              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/users" ? "text-blue-500 border-b-red-500" : ""}`}
-            >
-              
-              <FontAwesomeIcon icon={faUser} />
-              <span
-                className={`ml-3 whitespace-nowrap transition-all duration-300 ${
-                  open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
-                }`}
-              >
-                Users
-              </span>
-            </Link>
-          </li>
-
-          {/* Add User */}
-          <li>
-            <Link
-              to="/adminlayout/users/addUser"
-              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/users/addUser" ? "text-blue-500 border-b-red-500" : ""}`}
-            >
-              <FontAwesomeIcon icon={faUserPlus} />
-
-              <span
-                className={`ml-3 whitespace-nowrap transition-all duration-300 ${
-                  open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
-                }`}
-              >
-                Add User
-              </span>
-            </Link>
-          </li>
-          {/* Writer */}
-          <li>
-            <Link
-              to="/adminlayout/Writer"
-              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/Writer" ? "text-blue-500 border-b-red-500" : ""}`}
-            >
-              <FontAwesomeIcon icon={faUserPlus} />
-
-              <span
-                className={`ml-3 whitespace-nowrap transition-all duration-300 ${
-                  open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
-                }`}
-              >
-                Writer
-              </span>
-            </Link>
-          </li>
-          {/* Products */}
-          <li>
-            <Link
-              to="/adminlayout/products"
-              className={`flex items-center px-4 py-2 rounded hover:bg-gray-100 transition-all ${pathname === "/adminlayout/products" ? "text-blue-500 border-b-red-500" : ""}`}
-            >
-              <svg
-                className="w-[18px] h-[18px] flex-shrink-0 text-slate-700"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 2l10 5v10l-10 5-10-5V7l10-5z" />
-              </svg>
-
-              <span
-                className={`ml-3 whitespace-nowrap transition-all duration-300 ${
-                  open ? "opacity-100" : "opacity-0 w-0 overflow-hidden"
-                }`}
-              >
-                Products
-              </span>
-            </Link>
-          </li>
+          {SIDEBAR_MENU.filter((item) => item.roles.includes(role)).map(
+            (item) => (
+              <SidebarItem
+                key={item.to}
+                to={item.to}
+                icon={item.icon}
+                label={item.label}
+                open={open}
+                active={pathname === item.to}
+                customIcon={item.customIcon}
+              />
+            ),
+          )}
         </ul>
       </aside>
     </>

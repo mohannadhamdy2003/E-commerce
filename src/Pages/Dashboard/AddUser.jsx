@@ -126,6 +126,7 @@ const AddUser = () => {
               <NativeSelectOption value={"1995"}>Admin</NativeSelectOption>
               <NativeSelectOption value={"2001"}>User</NativeSelectOption>
               <NativeSelectOption value={"1996"}>Writer</NativeSelectOption>
+              <NativeSelectOption value={"1999"}>Product manager</NativeSelectOption>
             </NativeSelect>
           </div>
           <Button

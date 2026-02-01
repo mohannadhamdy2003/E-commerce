@@ -2,7 +2,7 @@ import React from 'react'
 
 const Writer = () => {
   return (
-    <div>Writer</div>
+    <div className='bg-amber-800'>Writersdfsdfsf</div>
   )
 }
 
